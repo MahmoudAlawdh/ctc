@@ -1,5 +1,6 @@
-import { ParseHTMLOpeningTenders } from './networking.ts';
+import { ParseHTMLOpeningTenders, ParseHTMLClosingTenders } from './networking.ts';
 import { ministryCodesValues } from './types.ts';
+
 const getAllOpeningTenders = async () => {
 	let result: Record<string, string>[] = [];
 	for (let i of ministryCodesValues) {
@@ -12,6 +13,8 @@ const getAllOpeningTenders = async () => {
 	}
 	return result;
 };
-let data = await getAllOpeningTenders();
-
-Deno.writeTextFile('./data.json', JSON.stringify(data));
+// let data = await getAllOpeningTenders();
+// Deno.writeTextFile('./data.json', JSON.stringify(data));
+let data2 = await ParseHTMLClosingTenders();
+Deno.writeTextFile('./ClosingTenderCompanies.json', JSON.stringify(data2.companies));
+Deno.writeTextFile('./ClosingTenderdata.json', JSON.stringify(data2.tenderlist));
