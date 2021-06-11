@@ -125,6 +125,7 @@ export const ParseHTMLClosingTenders = async () => {
 		for (let j in data[i]) {
 			let tender_no = data[i][j];
 			let url = `https://capt.gov.kw/en/tenders/closing-tenders/?ministry_code=${ministry_code}&ministry_code=${ministry_code}&tender_no=${tender_no}&ministry_code=${ministry_code}&tender_no=${tender_no}`;
+			console.log(url);
 			let request = await fetch(url, {
 				headers: {
 					accept: '*/*',
