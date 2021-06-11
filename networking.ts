@@ -1,6 +1,5 @@
 import { cheerio } from 'https://deno.land/x/cheerio@1.0.4/mod.ts';
 import { MINISTRY_CODES } from './types.ts';
-import { Page as data } from './Page.ts';
 const URL = (
 	Path: 'opening-tenders' | 'pre-tenders' | 'closing-tenders' | 'winning-bids',
 	Page?: number,
@@ -12,10 +11,8 @@ const URL = (
 
 export const ParseHTMLOpeningTenders = async (Page: number, Ministry_code: MINISTRY_CODES) => {
 	let result: Record<string, string>[] = [];
-	// let data = await fetch(URL('opening-tenders', Page, Ministry_code));
-	// let $ = cheerio.load(await data.text());
-	let $ = cheerio.load(await data);
-
+	let data = await fetch(URL('opening-tenders', Page, Ministry_code));
+	let $ = cheerio.load(await data.text());
 	let tables = $('.table');
 	await tables.each((index, element) => {
 		let record: Record<string, string> = {};
