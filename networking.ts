@@ -140,8 +140,8 @@ export const ParseHTMLClosingTenders = async () => {
 				let data = getRow($, element, id);
 				companies.push(data);
 			});
+			id++;
 		}
-		id++;
 	}
 
 	return { tenderlist, companies };
