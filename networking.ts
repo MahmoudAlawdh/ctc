@@ -1,6 +1,5 @@
 import { cheerio, Root, Cheerio } from 'https://deno.land/x/cheerio@1.0.4/mod.ts';
 import { MINISTRY_CODES } from './types.ts';
-import { ClosingPage } from './ClosingPage.ts';
 import { TenderNumber } from './TenderNumber.ts';
 const URL = (
 	Path: 'opening-tenders' | 'pre-tenders' | 'closing-tenders' | 'winning-bids',
@@ -145,4 +144,67 @@ export const ParseHTMLClosingTenders = async () => {
 	}
 
 	return { tenderlist, companies };
+};
+const getClassificationRowData: (
+	$: Root & Cheerio,
+	element: any
+) => {
+	'Contractor name': string;
+	Type: string;
+	Category: string;
+	Date: string;
+} = ($, element) => {
+	let result = { 'Contractor name': '', Type: '', Category: '', Date: '' };
+	$(element)
+		.children()
+		.each((index, element) => {
+			switch (index) {
+				case 0:
+					result['Contractor name'] = $(element).text();
+					break;
+				case 1:
+					result.Type = $(element).text();
+					break;
+				case 2:
+					result.Category = $(element).text();
+					break;
+				case 3:
+					result.Date = $(element).text();
+					break;
+			}
+		});
+	return result;
+};
+export const ParseHTMLClassifications = async () => {
+	let data: { 'Contractor name': string; Type: string; Category: string; Date: string }[] = [];
+	let request = await fetch('https://capt.gov.kw/en/classification/?page=1&querystring_key=page', {
+		headers: {
+			accept: '*/*',
+			'accept-language': 'en,ar;q=0.9,en-US;q=0.8',
+			'x-requested-with': 'XMLHttpRequest',
+		},
+		method: 'GET',
+	});
+	let $ = cheerio.load(await request.text());
+	// let $ = cheerio.load(await ClassificationPage);
+
+	let pages = $('.pagination > li').length - 1;
+	$('.table-row').each((index, item) => {
+		data.push(getClassificationRowData($, item));
+	});
+	for (let i = 2; i < pages; i++) {
+		let request = await fetch(`https://capt.gov.kw/en/classification/?page=${i}&querystring_key=page`, {
+			headers: {
+				accept: '*/*',
+				'accept-language': 'en,ar;q=0.9,en-US;q=0.8',
+				'x-requested-with': 'XMLHttpRequest',
+			},
+			method: 'GET',
+		});
+		let $ = cheerio.load(await request.text());
+		$('.table-row').each((index, item) => {
+			data.push(getClassificationRowData($, item));
+		});
+	}
+	return data;
 };

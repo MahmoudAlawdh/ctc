@@ -1,3 +1,5 @@
 /.vscode
 /Page.ts
 /*.csv
+/ClosingPage.ts
+/ClassificationPage.ts
